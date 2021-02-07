@@ -2,12 +2,17 @@ package com.example.healthylifestyle
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.example.healthylifestyle.databinding.ActivityExcerciseBinding
 import com.example.healthylifestyle.databinding.ActivityMainBinding
 
 class ExcerciseActivity : AppCompatActivity() {
-private lateinit var binding :ActivityExcerciseBinding
+    private var restTimer: CountDownTimer? = null
+    private var restProgress = 0
+
+    private lateinit var binding: ActivityExcerciseBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExcerciseBinding.inflate(layoutInflater)
@@ -15,13 +20,48 @@ private lateinit var binding :ActivityExcerciseBinding
         setContentView(view)
 
         setSupportActionBar(binding.toolbarExcersieActivity)
-        val actionbar=supportActionBar
-        if(actionbar!=null){
-          actionbar.setDisplayHomeAsUpEnabled(true)
+        val actionbar = supportActionBar
+        if (actionbar != null) {
+            actionbar.setDisplayHomeAsUpEnabled(true)
         }
-        binding.toolbarExcersieActivity.setNavigationOnClickListener{
+        binding.toolbarExcersieActivity.setNavigationOnClickListener {
             onBackPressed()
         }
+        setUpRestView()
+
+    }
+
+    override fun onDestroy() {
+        if(restTimer!=null){
+            restTimer!!.cancel()
+            restProgress=0
+        }
+        super.onDestroy()
+    }
+
+    private fun setRestProgressBar() {
+        binding.progressBar.progress = restProgress
+        restTimer = object : CountDownTimer(10000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                restProgress++
+                binding.progressBar.progress = 10 - restProgress
+                binding.tvTimer.text = (10 - restProgress).toString()
+            }
+
+            override fun onFinish() {
+                Toast.makeText(this@ExcerciseActivity, "Here now we begin", Toast.LENGTH_SHORT)
+                    .show()
+
+            }
+        }.start()
+    }
+
+    private fun setUpRestView(){
+        if(restTimer!=null){
+            restTimer!!.cancel()
+            restProgress=0
+        }
+        setRestProgressBar()
     }
 
 
