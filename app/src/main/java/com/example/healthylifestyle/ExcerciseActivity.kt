@@ -3,6 +3,7 @@ package com.example.healthylifestyle
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.example.healthylifestyle.databinding.ActivityExcerciseBinding
@@ -11,6 +12,13 @@ import com.example.healthylifestyle.databinding.ActivityMainBinding
 class ExcerciseActivity : AppCompatActivity() {
     private var restTimer: CountDownTimer? = null
     private var restProgress = 0
+
+    private var excersieTimer: CountDownTimer? = null
+    private var exceriseProgress = 0
+
+    private var excersieTimeDuration:Long =30
+
+
 
     private lateinit var binding: ActivityExcerciseBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +36,7 @@ class ExcerciseActivity : AppCompatActivity() {
             onBackPressed()
         }
         setUpRestView()
+
 
     }
 
@@ -49,8 +58,7 @@ class ExcerciseActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                Toast.makeText(this@ExcerciseActivity, "Here now we begin", Toast.LENGTH_SHORT)
-                    .show()
+               setUpExcersieView()
 
             }
         }.start()
@@ -62,6 +70,33 @@ class ExcerciseActivity : AppCompatActivity() {
             restProgress=0
         }
         setRestProgressBar()
+    }
+
+    private fun setExcersieProgressBar() {
+        binding.progressBarExcersie.progress = exceriseProgress
+        excersieTimer = object : CountDownTimer(excersieTimeDuration*1000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                exceriseProgress++
+                binding.progressBarExcersie.progress = excersieTimeDuration.toInt() - exceriseProgress
+                binding.tvExcersieTimer.text = (excersieTimeDuration.toInt()- exceriseProgress).toString()
+            }
+
+            override fun onFinish() {
+                Toast.makeText(this@ExcerciseActivity, "Here we will start next rest Timer screen", Toast.LENGTH_SHORT)
+                    .show()
+
+            }
+        }.start()
+    }
+
+    private fun setUpExcersieView(){
+        binding.llResultView.visibility= View.GONE
+        binding.llExcersieView.visibility=View.VISIBLE
+        if(excersieTimer!=null){
+            excersieTimer!!.cancel()
+            exceriseProgress=0
+        }
+        setExcersieProgressBar()
     }
 
 
